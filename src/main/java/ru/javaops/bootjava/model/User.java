@@ -1,6 +1,7 @@
 package ru.javaops.bootjava.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -58,6 +59,7 @@ public class User extends NamedEntity implements HasIdAndEmail {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private List<Voice> voices;
 
     public User(User u) {
