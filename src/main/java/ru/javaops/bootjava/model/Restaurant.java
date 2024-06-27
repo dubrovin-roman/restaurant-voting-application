@@ -31,4 +31,9 @@ public class Restaurant extends NamedEntity implements HasId {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private List<Menu> menuList;
+
+    public Restaurant(Integer id, String name, String address) {
+        super(id, name);
+        this.address = address;
+    }
 }
