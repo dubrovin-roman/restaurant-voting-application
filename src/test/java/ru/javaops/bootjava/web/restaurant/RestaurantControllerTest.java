@@ -2,19 +2,24 @@ package ru.javaops.bootjava.web.restaurant;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.repository.RestaurantRepository;
 import ru.javaops.bootjava.util.JsonUtil;
 import ru.javaops.bootjava.web.AbstractControllerTest;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.bootjava.web.restaurant.RestaurantController.REST_URL;
-import static ru.javaops.bootjava.web.restaurant.RestaurantTestData.RESTAURANT_MATCHER;
-import static ru.javaops.bootjava.web.restaurant.RestaurantTestData.getNew;
+import static ru.javaops.bootjava.web.restaurant.RestaurantTestData.*;
+import static ru.javaops.bootjava.web.restaurant.UniqueAddressValidator.EXCEPTION_DUPLICATE_ADDRESS;
 import static ru.javaops.bootjava.web.user.UserTestData.ADMIN_MAIL;
 
 class RestaurantControllerTest extends AbstractControllerTest {
@@ -26,7 +31,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
     void createWithLocation() throws Exception {
         Restaurant newRestaurant = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newRestaurant)))
                 .andExpect(status().isCreated());
 
@@ -36,6 +41,30 @@ class RestaurantControllerTest extends AbstractControllerTest {
         newRestaurant.setAddress(newRestaurant.getAddress().trim().toUpperCase());
         RESTAURANT_MATCHER.assertMatch(created, newRestaurant);
         RESTAURANT_MATCHER.assertMatch(restaurantRepository.getExisted(newId), newRestaurant);
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    @WithUserDetails(value = ADMIN_MAIL)
+    void createDuplicate() throws Exception {
+        Restaurant expected = new Restaurant(null, "New Restaurant", ASTORIA_ADDRESS);
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(expected)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_ADDRESS)));
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void createInvalid() throws Exception {
+        Restaurant invalid = new Restaurant(null, null, "new");
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
