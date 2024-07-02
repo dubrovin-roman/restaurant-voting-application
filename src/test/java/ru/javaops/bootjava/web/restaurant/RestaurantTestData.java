@@ -8,6 +8,7 @@ public class RestaurantTestData {
 
     public static final int ASTORIA_ID = 1;
     public static final int PANCAKES_ID = 2;
+    public static final int NOT_FOUND_ID = 100;
     public static final String ASTORIA_ADDRESS = "RUSSIA, MOSCOW, PETROVKA 38";
     public static final String PANCAKES_ADDRESS = "RUSSIA, MOSCOW, TKACHEVKA 451";
 
@@ -16,5 +17,9 @@ public class RestaurantTestData {
 
     public static Restaurant getNew() {
         return new Restaurant(null, "New Restaurant", "new address");
+    }
+
+    public static Restaurant getUpdated() {
+        return new Restaurant(ASTORIA_ID, "Updated Restaurant", ASTORIA_ADDRESS);
     }
 }

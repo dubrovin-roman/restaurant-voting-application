@@ -13,6 +13,7 @@ import ru.javaops.bootjava.util.JsonUtil;
 import ru.javaops.bootjava.web.AbstractControllerTest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -23,6 +24,8 @@ import static ru.javaops.bootjava.web.restaurant.UniqueAddressValidator.EXCEPTIO
 import static ru.javaops.bootjava.web.user.UserTestData.ADMIN_MAIL;
 
 class RestaurantControllerTest extends AbstractControllerTest {
+    private static final String REST_URL_SLASH = REST_URL + "/";
+
     @Autowired
     private RestaurantRepository restaurantRepository;
 
@@ -68,7 +71,46 @@ class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void update() {
+    @WithUserDetails(value = ADMIN_MAIL)
+    void update() throws Exception {
+        Restaurant updated = getUpdated();
+        updated.setId(null);
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + ASTORIA_ID)
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        RESTAURANT_MATCHER.assertMatch(restaurantRepository.getExisted(ASTORIA_ID), getUpdated());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateInvalid() throws Exception {
+        Restaurant updated = getUpdated();
+        updated.setId(null);
+        updated.setAddress("new");
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + ASTORIA_ID)
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateDuplicate() throws Exception {
+        Restaurant updated = getUpdated();
+        updated.setId(null);
+        updated.setAddress(PANCAKES_ADDRESS);
+        perform(MockMvcRequestBuilders.put(REST_URL_SLASH + ASTORIA_ID)
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_ADDRESS)));
+
     }
 
     @Test
@@ -76,7 +118,20 @@ class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void delete() {
+    @WithUserDetails(value = ADMIN_MAIL)
+    void delete() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + ASTORIA_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        assertFalse(restaurantRepository.findById(ASTORIA_ID).isPresent());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void deleteNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL_SLASH + NOT_FOUND_ID))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
