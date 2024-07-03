@@ -31,7 +31,7 @@ public class RestaurantController {
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(uniqueAddressValidator);
+        binder.addValidators(uniqueAddressValidator);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
