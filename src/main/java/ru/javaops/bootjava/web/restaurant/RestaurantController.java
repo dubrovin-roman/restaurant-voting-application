@@ -24,7 +24,7 @@ import static ru.javaops.bootjava.web.RestValidation.checkNew;
 @Slf4j
 @AllArgsConstructor
 public class RestaurantController {
-    static final String REST_URL = "/api/admin/restaurant";
+    static final String REST_URL = "/api/admin/restaurants";
 
     private final RestaurantRepository restaurantRepository;
     private final UniqueAddressValidator uniqueAddressValidator;
