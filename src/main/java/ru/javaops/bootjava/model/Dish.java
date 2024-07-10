@@ -1,7 +1,9 @@
 package ru.javaops.bootjava.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import ru.javaops.bootjava.HasId;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Table(name = "dish")
@@ -23,7 +26,12 @@ public class Dish extends NamedEntity implements HasId {
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Menu menu;
+    private Restaurant restaurant;
+
+    @Column(name = "date_of_menu", nullable = false, columnDefinition = "date default now()", updatable = false)
+    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Date dateOfMenu = new Date();
 }

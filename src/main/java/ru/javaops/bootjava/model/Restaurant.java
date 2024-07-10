@@ -30,7 +30,7 @@ public class Restaurant extends NamedEntity implements HasId {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    private List<Menu> menuList;
+    private List<Dish> dishList;
 
     public Restaurant(Integer id, String name, String address) {
         super(id, name);
