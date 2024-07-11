@@ -14,7 +14,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import ru.javaops.bootjava.HasId;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "dish")
@@ -35,5 +35,5 @@ public class Dish extends NamedEntity implements HasId {
     @Column(name = "date_of_menu", nullable = false, columnDefinition = "date default now()", updatable = false)
     @NotNull
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Date dateOfMenu = new Date();
+    private LocalDate dateOfMenu = LocalDate.now();
 }
