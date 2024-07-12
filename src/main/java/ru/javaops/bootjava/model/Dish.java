@@ -27,7 +27,7 @@ public class Dish extends NamedEntity implements HasId {
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Restaurant restaurant;
