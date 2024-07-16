@@ -10,4 +10,16 @@ VALUES ('USER', 1),
 
 INSERT INTO RESTAURANT (name, address)
 VALUES ('Astoria', 'RUSSIA, MOSCOW, PETROVKA 38'),
-       ('Pancakes', 'RUSSIA, MOSCOW, TKACHEVKA 451')
+       ('Pancakes', 'RUSSIA, MOSCOW, TKACHEVKA 451');
+
+INSERT INTO DISH (name, price, restaurant_id)
+VALUES ('Soup', 560.23, 1),
+       ('Steak', 1750.30, 1),
+       ('Fish', 1200.52, 1),
+       ('Salad', 450.55, 1),
+       ('Dessert', 780.00, 1);
+
+INSERT INTO DISH (name, price, restaurant_id, date_of_menu)
+VALUES ('Soup Old', 490.23, 1, '2024-07-01'),
+       ('Steak Old', 1700.30, 1, '2024-07-01'),
+       ('Fish Old', 1130.52, 1, '2024-07-01');

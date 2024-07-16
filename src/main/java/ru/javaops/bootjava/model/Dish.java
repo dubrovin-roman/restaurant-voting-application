@@ -36,4 +36,11 @@ public class Dish extends NamedEntity implements HasId {
     @NotNull
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate dateOfMenu = LocalDate.now();
+
+    public Dish(Integer id, String name, BigDecimal price, Restaurant restaurant, LocalDate dateOfMenu) {
+        super(id, name);
+        this.price = price;
+        this.restaurant = restaurant;
+        this.dateOfMenu = dateOfMenu;
+    }
 }
