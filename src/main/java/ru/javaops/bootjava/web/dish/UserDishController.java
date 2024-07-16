@@ -15,7 +15,7 @@ public class UserDishController extends AbstractDishController {
     static final String REST_URL = "/api/user";
 
     @Override
-    @GetMapping(value = "/restaurants/{id}/dishes")
+    @GetMapping(value = "/restaurants/{id}/dishes/by-date")
     public List<Dish> getAllByRestaurantIdAndDateOfMenu(@PathVariable int id,
                                                         @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateOfMenu) {
         return super.getAllByRestaurantIdAndDateOfMenu(id, dateOfMenu);

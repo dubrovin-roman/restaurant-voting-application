@@ -49,10 +49,18 @@ public class AdminDishController extends AbstractDishController {
     }
 
     @Override
-    @GetMapping(value = "/restaurants/{id}/dishes")
+    @GetMapping(value = "/restaurants/{id}/dishes/by-date")
     public List<Dish> getAllByRestaurantIdAndDateOfMenu(@PathVariable int id,
                                                         @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateOfMenu) {
         return super.getAllByRestaurantIdAndDateOfMenu(id, dateOfMenu);
+    }
+
+    @GetMapping(value = "/restaurants/{id}/dishes")
+    @Transactional(readOnly = true)
+    public List<Dish> getAllByRestaurantId(@PathVariable int id) {
+        restaurantRepository.isPresentByIdOrElseThrow(id);
+        log.info("getAllByRestaurantId {}", id);
+        return dishRepository.getByRestaurantId(id);
     }
 
     @DeleteMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
