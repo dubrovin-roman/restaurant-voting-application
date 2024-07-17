@@ -24,6 +24,7 @@ import java.time.LocalDate;
 public class Dish extends NamedEntity implements HasId {
     @Column(name = "price", nullable = false)
     @DecimalMin(value = "0.00")
+    @NotNull
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)

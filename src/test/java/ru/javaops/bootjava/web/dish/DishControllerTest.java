@@ -10,56 +10,56 @@ import ru.javaops.bootjava.web.restaurant.RestaurantTestData;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaops.bootjava.web.dish.DishTestData.*;
 import static ru.javaops.bootjava.web.user.UserTestData.USER_MAIL;
 
-class UserDishControllerTest extends AbstractControllerTest {
-    private static final String REST_URL_FORMAT = UserDishController.REST_URL + "/restaurants/%d/dishes/by-date";
+class DishControllerTest extends AbstractControllerTest {
+    private static final String REST_URL_FORMAT = DishController.REST_URL + "/restaurants/%d/dishes/by-date";
 
     @Test
     @WithUserDetails(value = USER_MAIL)
     void getAllByRestaurantIdAndDateOfMenuNull() throws Exception {
-        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, 1)))
+        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DishTestData.DISH_MATCHER.contentJson(DishTestData.dishesByDateNow));
+                .andExpect(DISH_MATCHER.contentJson(dishesByDateNow));
     }
 
     @Test
     @WithUserDetails(value = USER_MAIL)
     void getAllByRestaurantIdAndDateOfMenuNow() throws Exception {
-        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, 1))
+        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID))
                 .param("dateOfMenu", LocalDate.now().toString()))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DishTestData.DISH_MATCHER.contentJson(DishTestData.dishesByDateNow));
+                .andExpect(DISH_MATCHER.contentJson(dishesByDateNow));
     }
 
     @Test
     @WithUserDetails(value = USER_MAIL)
     void getAllByRestaurantIdAndDateOfMenuOld() throws Exception {
-        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, 1))
-                .param("dateOfMenu", DishTestData.DATE_OLD_MENU))
+        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID))
+                .param("dateOfMenu", DATE_OLD_MENU))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DishTestData.DISH_MATCHER.contentJson(DishTestData.dishesByOldDate));
+                .andExpect(DISH_MATCHER.contentJson(dishesByOldDate));
     }
 
     @Test
     @WithUserDetails(value = USER_MAIL)
     void getAllByRestaurantIdAndDateOfMenuNoDishes() throws Exception {
-        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, 1))
-                .param("dateOfMenu", DishTestData.DATE_NO_DISHES))
+        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID))
+                .param("dateOfMenu", DATE_NO_DISHES))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DishTestData.DISH_MATCHER.contentJson(List.of()));
+                .andExpect(DISH_MATCHER.contentJson(List.of()));
     }
 
     @Test

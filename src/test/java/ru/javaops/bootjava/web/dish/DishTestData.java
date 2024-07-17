@@ -16,6 +16,7 @@ public class DishTestData {
     public static final int FISH_ID = 3;
     public static final int SALAD_ID = 4;
     public static final int DESSERT_ID = 5;
+    public static final int DISH_NOT_FOUND_ID = 1000;
 
 
     public static final Dish soup = new Dish(SOUP_ID,
@@ -68,4 +69,13 @@ public class DishTestData {
 
     public static final List<Dish> dishesByDateNow = List.of(salad, soup, dessert, fish, steak);
     public static final List<Dish> dishesByOldDate = List.of(soupOld, fishOld, steakOld);
+    public static final List<Dish> dishesByAstoria = List.of(salad, soup, dessert, fish, steak, soupOld, fishOld, steakOld);
+
+    public static Dish getNew() {
+        return new Dish(null, "New Dish", new BigDecimal("325.00"), null, LocalDate.now());
+    }
+
+    public static Dish getUpdated() {
+        return new Dish(STEAK_ID, "Steak Updated", new BigDecimal("325.00"), null, LocalDate.now());
+    }
 }

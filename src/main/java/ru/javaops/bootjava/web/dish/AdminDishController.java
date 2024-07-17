@@ -1,20 +1,21 @@
 package ru.javaops.bootjava.web.dish;
 
 import jakarta.validation.Valid;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.bootjava.error.IllegalRequestDataException;
 import ru.javaops.bootjava.model.Dish;
 import ru.javaops.bootjava.model.Restaurant;
+import ru.javaops.bootjava.repository.DishRepository;
+import ru.javaops.bootjava.repository.RestaurantRepository;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import static ru.javaops.bootjava.web.RestValidation.assureIdConsistent;
@@ -22,8 +23,13 @@ import static ru.javaops.bootjava.web.RestValidation.checkNew;
 
 @RestController
 @RequestMapping(value = AdminDishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class AdminDishController extends AbstractDishController {
+@Slf4j
+@AllArgsConstructor
+public class AdminDishController {
     static final String REST_URL = "/api/admin";
+
+    protected DishRepository dishRepository;
+    protected RestaurantRepository restaurantRepository;
 
     @PostMapping(value = "/restaurants/{id}/dishes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -43,16 +49,10 @@ public class AdminDishController extends AbstractDishController {
     @Transactional(readOnly = true)
     public Dish get(@PathVariable int restaurantId, @PathVariable int dishId) {
         restaurantRepository.isPresentByIdOrElseThrow(restaurantId);
+        Dish dish = dishRepository.getExisted(dishId);
         checkDishBelongsToRestaurant(restaurantId, dishId);
         log.info("get {}", dishId);
-        return dishRepository.getExisted(dishId);
-    }
-
-    @Override
-    @GetMapping(value = "/restaurants/{id}/dishes/by-date")
-    public List<Dish> getAllByRestaurantIdAndDateOfMenu(@PathVariable int id,
-                                                        @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateOfMenu) {
-        return super.getAllByRestaurantIdAndDateOfMenu(id, dateOfMenu);
+        return dish;
     }
 
     @GetMapping(value = "/restaurants/{id}/dishes")
