@@ -13,11 +13,11 @@ import ru.javaops.bootjava.HasId;
 import java.util.Date;
 
 @Entity
-@Table(name = "voice")
+@Table(name = "vote")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Voice extends BaseEntity implements HasId {
+public class Vote extends BaseEntity implements HasId {
     @Column(name = "date_time_voting", nullable = false, columnDefinition = "timestamp default now()")
     @NotNull
     private Date dateTimeVoting = new Date();
