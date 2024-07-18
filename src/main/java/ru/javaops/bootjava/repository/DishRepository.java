@@ -1,8 +1,10 @@
 package ru.javaops.bootjava.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaops.bootjava.error.NotFoundException;
 import ru.javaops.bootjava.model.Dish;
 
 import java.time.LocalDate;
@@ -20,4 +22,20 @@ public interface DishRepository extends BaseRepository<Dish> {
 
     @Query("SELECT d FROM Dish d WHERE d.restaurant.id = :restaurantId AND d.id = :dishId")
     Optional<Dish> getByRestaurantIdAndDishId(@Param("restaurantId") int restaurantId, @Param("dishId") int dishId);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Dish d WHERE d.restaurant.id = :restaurantId AND d.id = :dishId")
+    int deleteByRestaurantIdAndDishId(@Param("restaurantId") int restaurantId, @Param("dishId") int dishId);
+
+    default void deleteExistedByRestaurantIdAndDishId(int restaurantId, int dishId) {
+        if (deleteByRestaurantIdAndDishId(restaurantId, dishId) == 0) {
+            throw new NotFoundException("Dish with id=" + dishId + " in Restaurant with id=" + restaurantId + " not found");
+        }
+    }
+
+    default Dish getExistedByRestaurantIdAndDishId(int restaurantId, int dishId) {
+        return getByRestaurantIdAndDishId(restaurantId, dishId).orElseThrow(
+                () -> new NotFoundException("Dish with id=" + dishId + " in Restaurant with id=" + restaurantId + " not found"));
+    }
 }

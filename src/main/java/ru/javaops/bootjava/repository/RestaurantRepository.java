@@ -18,7 +18,7 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
 
     boolean existsRestaurantById(int id);
 
-    default void isPresentByIdOrElseThrow(int id) {
+    default void isPresentByIdOrElseThrowNotFound(int id) {
         if (!existsRestaurantById(id)) {
             throw new NotFoundException("Restaurant with id=" + id + " not found");
         }

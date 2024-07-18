@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.javaops.bootjava.model.Dish;
 import ru.javaops.bootjava.repository.DishRepository;
@@ -24,10 +25,11 @@ public class DishController {
     protected RestaurantRepository restaurantRepository;
 
     @GetMapping(value = "/restaurants/{id}/dishes/by-date")
+    @Transactional(readOnly = true)
     public List<Dish> getAllByRestaurantIdAndDateOfMenu(@PathVariable int id,
                                                         @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateOfMenu) {
-        restaurantRepository.isPresentByIdOrElseThrow(id);
         log.info("getAll restaurantId = {} dateOfMenu = {}", id, dateOfMenu);
+        restaurantRepository.isPresentByIdOrElseThrowNotFound(id);
         if (dateOfMenu == null) {
             dateOfMenu = LocalDate.now();
         }

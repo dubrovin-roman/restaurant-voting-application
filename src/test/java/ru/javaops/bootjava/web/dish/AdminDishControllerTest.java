@@ -14,7 +14,6 @@ import ru.javaops.bootjava.web.restaurant.RestaurantTestData;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -97,14 +96,6 @@ class AdminDishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    void getDishNotBelongToRestaurant() throws Exception {
-        perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT_WITH_TWO_ID, RestaurantTestData.PANCAKES_ID, STEAK_ID)))
-                .andDo(print())
-                .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    @WithUserDetails(value = ADMIN_MAIL)
     void getAllByRestaurantId() throws Exception {
         perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT_WITH_ONE_ID, RestaurantTestData.ASTORIA_ID)))
                 .andExpect(status().isOk())
@@ -127,8 +118,15 @@ class AdminDishControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.delete(String.format(REST_URL_FORMAT_WITH_TWO_ID, RestaurantTestData.ASTORIA_ID, DESSERT_ID)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        Optional<Dish> optional = dishRepository.findById(DESSERT_ID);
-        assertFalse(optional.isPresent());
+        assertFalse(dishRepository.findById(DESSERT_ID).isPresent());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void deleteNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.delete(String.format(REST_URL_FORMAT_WITH_TWO_ID, RestaurantTestData.ASTORIA_ID, DISH_NOT_FOUND_ID)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -143,5 +141,40 @@ class AdminDishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
 
         DISH_MATCHER.assertMatch(dishRepository.getExisted(STEAK_ID), getUpdated());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateInvalid() throws Exception {
+        Dish invalid = new Dish(null, "n", new BigDecimal("-100.23"), null, LocalDate.now());
+        perform(MockMvcRequestBuilders.put(String.format(REST_URL_FORMAT_WITH_TWO_ID, RestaurantTestData.ASTORIA_ID, STEAK_ID))
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateRestaurantNotFound() throws Exception {
+        Dish updated = getUpdated();
+        updated.setId(null);
+        perform(MockMvcRequestBuilders.put(String.format(REST_URL_FORMAT_WITH_TWO_ID, RestaurantTestData.NOT_FOUND_ID, STEAK_ID))
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateDishNotBelongsToRestaurant() throws Exception {
+        Dish updated = getUpdated();
+        updated.setId(null);
+        perform(MockMvcRequestBuilders.put(String.format(REST_URL_FORMAT_WITH_TWO_ID, RestaurantTestData.PANCAKES_ID, STEAK_ID))
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 }

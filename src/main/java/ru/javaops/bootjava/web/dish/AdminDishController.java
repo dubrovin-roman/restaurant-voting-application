@@ -46,31 +46,24 @@ public class AdminDishController {
     }
 
     @GetMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
-    @Transactional(readOnly = true)
     public Dish get(@PathVariable int restaurantId, @PathVariable int dishId) {
-        restaurantRepository.isPresentByIdOrElseThrow(restaurantId);
-        Dish dish = dishRepository.getExisted(dishId);
-        checkDishBelongsToRestaurant(restaurantId, dishId);
         log.info("get {}", dishId);
-        return dish;
+        return dishRepository.getExistedByRestaurantIdAndDishId(restaurantId, dishId);
     }
 
     @GetMapping(value = "/restaurants/{id}/dishes")
     @Transactional(readOnly = true)
     public List<Dish> getAllByRestaurantId(@PathVariable int id) {
-        restaurantRepository.isPresentByIdOrElseThrow(id);
         log.info("getAllByRestaurantId {}", id);
+        restaurantRepository.isPresentByIdOrElseThrowNotFound(id);
         return dishRepository.getByRestaurantId(id);
     }
 
     @DeleteMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
     public void delete(@PathVariable int restaurantId, @PathVariable int dishId) {
-        restaurantRepository.isPresentByIdOrElseThrow(restaurantId);
-        checkDishBelongsToRestaurant(restaurantId, dishId);
         log.info("delete {}", dishId);
-        dishRepository.deleteExisted(dishId);
+        dishRepository.deleteExistedByRestaurantIdAndDishId(restaurantId, dishId);
     }
 
     @PutMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
@@ -79,9 +72,9 @@ public class AdminDishController {
     public void update(@PathVariable int restaurantId,
                        @PathVariable int dishId,
                        @Valid @RequestBody Dish dish) {
+        log.info("update {} with id = {}", dish, dishId);
         Restaurant restaurant = restaurantRepository.getExisted(restaurantId);
         checkDishBelongsToRestaurant(restaurantId, dishId);
-        log.info("update {} with id = {}", dish, dishId);
         assureIdConsistent(dish, dishId);
         dish.setRestaurant(restaurant);
         dishRepository.save(dish);
