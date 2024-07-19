@@ -3,6 +3,7 @@ package ru.javaops.bootjava.web.restaurant;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.repository.RestaurantRepository;
 
 import java.net.URI;
+import java.util.List;
 
 import static ru.javaops.bootjava.web.RestValidation.assureIdConsistent;
 import static ru.javaops.bootjava.web.RestValidation.checkNew;
@@ -62,5 +64,11 @@ public class AdminRestaurantController {
     public void delete(@PathVariable int id) {
         log.info("delete {}", id);
         restaurantRepository.deleteExisted(id);
+    }
+
+    @GetMapping
+    public List<Restaurant> getAll() {
+        log.info("getAll");
+        return restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name", "address"));
     }
 }

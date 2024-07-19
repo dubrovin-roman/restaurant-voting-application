@@ -67,6 +67,34 @@ public class DishTestData {
             RestaurantTestData.astoria,
             LocalDate.parse(DATE_OLD_MENU));
 
+    public static final int HAMBURGER_HEIGHT_ID = 9;
+    public static final int STEAK_HEIGHT_ID = 10;
+    public static final int SALAD_HEIGHT_ID = 11;
+
+    public static final Dish hamburgerHeight = new Dish(HAMBURGER_HEIGHT_ID,
+            "Hamburger",
+            new BigDecimal("750.23"),
+            RestaurantTestData.height,
+            LocalDate.now());
+    public static final Dish steakHeight = new Dish(STEAK_HEIGHT_ID,
+            "Steak",
+            new BigDecimal("2752.30"),
+            RestaurantTestData.height,
+            LocalDate.now());
+    public static final Dish saladHeight = new Dish(SALAD_HEIGHT_ID,
+            "Salad",
+            new BigDecimal("550.55"),
+            RestaurantTestData.height,
+            LocalDate.now());
+
+    public static final int SALAD_OLD_PANCAKES_ID = 12;
+
+    public static final Dish saladPancakes = new Dish(SALAD_OLD_PANCAKES_ID,
+            "Salad Old",
+            new BigDecimal("120.52"),
+            RestaurantTestData.pancakes,
+            LocalDate.parse(DATE_OLD_MENU));
+
     public static final List<Dish> dishesByDateNow = List.of(salad, soup, dessert, fish, steak);
     public static final List<Dish> dishesByOldDate = List.of(soupOld, fishOld, steakOld);
     public static final List<Dish> dishesByAstoria = List.of(salad, soup, dessert, fish, steak, soupOld, fishOld, steakOld);

@@ -1,6 +1,6 @@
 package ru.javaops.bootjava.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -29,7 +29,7 @@ public class Restaurant extends NamedEntity implements HasId {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonIgnore
     private List<Dish> dishList;
 
     public Restaurant(Integer id, String name, String address) {

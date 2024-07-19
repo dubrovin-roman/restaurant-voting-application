@@ -2,7 +2,6 @@ package ru.javaops.bootjava.web.restaurant;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.repository.RestaurantRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,9 +21,9 @@ public class RestaurantController {
 
     private final RestaurantRepository restaurantRepository;
 
-    @GetMapping
-    public List<Restaurant> getAll() {
-        log.info("getAll");
-        return restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name", "address"));
+    @GetMapping("/for-today-with-dishes")
+    public List<Restaurant> getAllForTodayWithDishes() {
+        log.info("getAllForTodayWithDishes");
+        return restaurantRepository.findRestaurantByDateWithDishes(LocalDate.now());
     }
 }
