@@ -1,5 +1,6 @@
 package ru.javaops.bootjava.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -10,7 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.javaops.bootjava.HasId;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "vote")
@@ -18,9 +19,10 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Vote extends BaseEntity implements HasId {
-    @Column(name = "date_time_voting", nullable = false, columnDefinition = "timestamp default now()")
+    @Column(name = "date_voting", nullable = false, columnDefinition = "date default now()", updatable = false)
     @NotNull
-    private Date dateTimeVoting = new Date();
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDate dateVoting = LocalDate.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
