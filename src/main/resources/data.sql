@@ -32,3 +32,6 @@ VALUES ('Hamburger', 750.23, 3),
 
 INSERT INTO DISH (name, price, restaurant_id, date_of_menu)
 VALUES ('Salad Old', 120.52, 2, '2024-07-01');
+
+INSERT INTO VOTE (user_id, restaurant_id)
+VALUES (2, 3);

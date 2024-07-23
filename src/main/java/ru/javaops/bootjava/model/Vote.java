@@ -14,7 +14,9 @@ import ru.javaops.bootjava.HasId;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "vote")
+@Table(name = "vote",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_voting"},
+                name = "vote_unique_user_date_voting_idx")})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,4 +34,11 @@ public class Vote extends BaseEntity implements HasId {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+    public Vote(Integer id, LocalDate dateVoting, Restaurant restaurant, User user) {
+        super(id);
+        this.dateVoting = dateVoting;
+        this.restaurant = restaurant;
+        this.user = user;
+    }
 }

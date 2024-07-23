@@ -15,12 +15,7 @@ public interface VoteRepository extends BaseRepository<Vote> {
     @Transactional
     @Modifying
     @Query(nativeQuery = true, value = "INSERT INTO vote (restaurant_id, user_id) VALUES (:restaurantId, :userId)")
-    void createVote(@Param("userId") int userId, @Param("restaurantId") int restaurantId);
-
-    @Transactional
-    @Modifying
-    @Query("UPDATE Vote v SET v.restaurant.id = :restaurantId WHERE v.user.id = :userId AND v.dateVoting = :date")
-    void updateVote(@Param("userId") int userId, @Param("restaurantId") int restaurantId, @Param("date") LocalDate date);
+    void createVoteToday(@Param("userId") int userId, @Param("restaurantId") int restaurantId);
 
     @Query("SELECT v FROM Vote v WHERE v.dateVoting = :date AND v.user.id = :userId")
     Optional<Vote> findByDateVotingAndUserId(@Param("date") LocalDate date, @Param("userId") int userId);
