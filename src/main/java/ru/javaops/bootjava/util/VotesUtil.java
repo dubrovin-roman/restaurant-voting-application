@@ -1,11 +1,14 @@
 package ru.javaops.bootjava.util;
 
 import lombok.experimental.UtilityClass;
+import ru.javaops.bootjava.model.Vote;
+import ru.javaops.bootjava.to.VoteTo;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @UtilityClass
-public class VoteUtil {
+public class VotesUtil {
     private static LocalTime endVoteTime = LocalTime.of(11, 0);
 
     public static boolean isCanNotReVote() {
@@ -18,5 +21,15 @@ public class VoteUtil {
 
     public static void prepareEndVoteTimeForFailTests() {
         endVoteTime = LocalTime.now().minusMinutes(30);
+    }
+
+    public static VoteTo createTo(Vote vote) {
+        return new VoteTo(vote.id(), vote.getDateVoting(), vote.getRestaurant().id(), vote.getUser().id());
+    }
+
+    public static List<VoteTo> createListTo(List<Vote> votes) {
+        return votes.stream()
+                .map(VotesUtil::createTo)
+                .toList();
     }
 }

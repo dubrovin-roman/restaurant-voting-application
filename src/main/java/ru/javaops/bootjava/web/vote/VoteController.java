@@ -12,7 +12,7 @@ import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.model.Vote;
 import ru.javaops.bootjava.repository.RestaurantRepository;
 import ru.javaops.bootjava.repository.VoteRepository;
-import ru.javaops.bootjava.util.VoteUtil;
+import ru.javaops.bootjava.util.VotesUtil;
 import ru.javaops.bootjava.web.AuthUser;
 
 import java.time.LocalDate;
@@ -38,7 +38,7 @@ public class VoteController {
         Restaurant restaurant = restaurantRepository.getExisted(id);
         Optional<Vote> optionalVote = voteRepository.findByDateVotingAndUserId(localDate, userId);
         if (optionalVote.isPresent()) {
-            if (VoteUtil.isCanNotReVote()) {
+            if (VotesUtil.isCanNotReVote()) {
                 throw new DataConflictException("Time is after eleven o'clock, voting cannot be changed.");
             }
             Vote vote = optionalVote.get();

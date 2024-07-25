@@ -6,7 +6,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaops.bootjava.model.Vote;
 import ru.javaops.bootjava.repository.VoteRepository;
-import ru.javaops.bootjava.util.VoteUtil;
+import ru.javaops.bootjava.util.VotesUtil;
 import ru.javaops.bootjava.web.AbstractControllerTest;
 import ru.javaops.bootjava.web.restaurant.RestaurantTestData;
 
@@ -40,7 +40,7 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void reVote() throws Exception {
-        VoteUtil.prepareEndVoteTimeForPassTests();
+        VotesUtil.prepareEndVoteTimeForPassTests();
 
         perform(MockMvcRequestBuilders.post(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID)))
                 .andExpect(status().isNoContent())
@@ -54,7 +54,7 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void reVoteFail() throws Exception {
-        VoteUtil.prepareEndVoteTimeForFailTests();
+        VotesUtil.prepareEndVoteTimeForFailTests();
 
         perform(MockMvcRequestBuilders.post(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID)))
                 .andExpect(status().isConflict())
