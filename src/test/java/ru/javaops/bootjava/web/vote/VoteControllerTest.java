@@ -22,7 +22,7 @@ import static ru.javaops.bootjava.web.vote.VoteTestData.VOTE_MATCHER;
 import static ru.javaops.bootjava.web.vote.VoteTestData.vote_admin;
 
 class VoteControllerTest extends AbstractControllerTest {
-    private static final String REST_URL_FORMAT = VoteController.REST_URL + "/%d/votes";
+    private static final String REST_URL_BY_RESTAURANT = VoteController.REST_URL + "/by-restaurant";
 
     @Autowired
     private VoteRepository voteRepository;
@@ -30,11 +30,12 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void toVote() throws Exception {
-        perform(MockMvcRequestBuilders.post(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID)))
+        perform(MockMvcRequestBuilders.post(REST_URL_BY_RESTAURANT)
+                .param("restaurantId", String.valueOf(RestaurantTestData.ASTORIA_ID)))
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
-        assertTrue(voteRepository.findByDateVotingAndUserId(LocalDate.now(), USER_ID).isPresent());
+        assertTrue(voteRepository.getByDateVotingAndUserId(LocalDate.now(), USER_ID).isPresent());
     }
 
     @Test
@@ -42,11 +43,12 @@ class VoteControllerTest extends AbstractControllerTest {
     void reVote() throws Exception {
         VotesUtil.prepareEndVoteTimeForPassTests();
 
-        perform(MockMvcRequestBuilders.post(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID)))
+        perform(MockMvcRequestBuilders.post(REST_URL_BY_RESTAURANT)
+                .param("restaurantId", String.valueOf(RestaurantTestData.ASTORIA_ID)))
                 .andExpect(status().isNoContent())
                 .andDo(print());
 
-        Optional<Vote> optionalVote = voteRepository.findByDateVotingAndUserId(LocalDate.now(), ADMIN_ID);
+        Optional<Vote> optionalVote = voteRepository.getByDateVotingAndUserId(LocalDate.now(), ADMIN_ID);
         assertTrue(optionalVote.isPresent());
         assertEquals(RestaurantTestData.ASTORIA_ID, optionalVote.get().getRestaurant().id());
     }
@@ -56,11 +58,12 @@ class VoteControllerTest extends AbstractControllerTest {
     void reVoteFail() throws Exception {
         VotesUtil.prepareEndVoteTimeForFailTests();
 
-        perform(MockMvcRequestBuilders.post(String.format(REST_URL_FORMAT, RestaurantTestData.ASTORIA_ID)))
+        perform(MockMvcRequestBuilders.post(REST_URL_BY_RESTAURANT)
+                .param("restaurantId", String.valueOf(RestaurantTestData.ASTORIA_ID)))
                 .andExpect(status().isConflict())
                 .andDo(print());
 
-        Optional<Vote> optionalVote = voteRepository.findByDateVotingAndUserId(LocalDate.now(), ADMIN_ID);
+        Optional<Vote> optionalVote = voteRepository.getByDateVotingAndUserId(LocalDate.now(), ADMIN_ID);
         assertTrue(optionalVote.isPresent());
         VOTE_MATCHER.assertMatch(optionalVote.get(), vote_admin);
     }

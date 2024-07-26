@@ -23,20 +23,20 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public class VoteController {
-    static final String REST_URL = "/api/restaurants";
+    static final String REST_URL = "/api/votes";
 
     private VoteRepository voteRepository;
     private RestaurantRepository restaurantRepository;
 
-    @PostMapping("/{id}/votes")
+    @PostMapping("/by-restaurant")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void toVote(@PathVariable int id, @AuthenticationPrincipal AuthUser authUser) {
+    public void toVote(@RequestParam int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
         LocalDate localDate = LocalDate.now();
         int userId = authUser.id();
-        log.info("To vote for restaurant id={} date={}", id, localDate);
-        Restaurant restaurant = restaurantRepository.getExisted(id);
-        Optional<Vote> optionalVote = voteRepository.findByDateVotingAndUserId(localDate, userId);
+        log.info("To vote for restaurant id={} date={}", restaurantId, localDate);
+        Restaurant restaurant = restaurantRepository.getExisted(restaurantId);
+        Optional<Vote> optionalVote = voteRepository.getByDateVotingAndUserId(localDate, userId);
         if (optionalVote.isPresent()) {
             if (VotesUtil.isCanNotReVote()) {
                 throw new DataConflictException("Time is after eleven o'clock, voting cannot be changed.");
@@ -45,7 +45,7 @@ public class VoteController {
             vote.setRestaurant(restaurant);
             voteRepository.save(vote);
         } else {
-            voteRepository.createVoteToday(userId, id);
+            voteRepository.createVoteToday(userId, restaurantId);
         }
     }
 }

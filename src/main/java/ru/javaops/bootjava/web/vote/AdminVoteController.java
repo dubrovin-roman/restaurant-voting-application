@@ -26,13 +26,13 @@ public class AdminVoteController {
     @GetMapping()
     public List<VoteTo> getAll() {
         log.info("getAll");
-        return VotesUtil.createListTo(voteRepository.findAll());
+        return VotesUtil.createListTo(voteRepository.getAllWithEntityGraphAndOrderByDateVotingDesc());
     }
 
     @GetMapping("/by-user")
     public List<VoteTo> getAllByUserId(@RequestParam int userId) {
         log.info("getAllByUserId {}", userId);
-        return VotesUtil.createListTo(voteRepository.findByUserId(userId));
+        return VotesUtil.createListTo(voteRepository.getByUserId(userId));
     }
 
     @DeleteMapping("/{id}")
@@ -43,18 +43,18 @@ public class AdminVoteController {
     }
 
     @GetMapping("/{id}")
-    public int get(@PathVariable int id) {
+    public VoteTo get(@PathVariable int id) {
         log.info("get by id: {}", id);
-        return voteRepository.getRestaurantIdByVoteIdOrElseThrowNotFound(id);
+        return VotesUtil.createTo(voteRepository.getByVoteIdOrElseThrowNotFound(id));
     }
 
     @GetMapping("/by-user-date")
-    public int getByUserIdAndDate(@RequestParam int userId,
-                                  @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public VoteTo getByUserIdAndDate(@RequestParam int userId,
+                                     @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         log.info("getByUserIdAndDate: userId={}, date={}", userId, date);
         if (date == null) {
             date = LocalDate.now();
         }
-        return voteRepository.getRestaurantIdByUserIdAndDateVotingOrElseThrowNotFound(userId, date);
+        return VotesUtil.createTo(voteRepository.getByUserIdAndDateVotingOrElseThrowNotFound(userId, date));
     }
 }
