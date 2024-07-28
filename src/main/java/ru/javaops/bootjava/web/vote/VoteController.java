@@ -12,6 +12,7 @@ import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.model.Vote;
 import ru.javaops.bootjava.repository.RestaurantRepository;
 import ru.javaops.bootjava.repository.VoteRepository;
+import ru.javaops.bootjava.to.VoteTo;
 import ru.javaops.bootjava.util.VotesUtil;
 import ru.javaops.bootjava.web.AuthUser;
 
@@ -47,5 +48,13 @@ public class VoteController {
         } else {
             voteRepository.createVoteToday(userId, restaurantId);
         }
+    }
+
+    @GetMapping("/on-today")
+    public VoteTo getVoteOnToday(@AuthenticationPrincipal AuthUser authUser) {
+        int userId = authUser.id();
+        LocalDate date = LocalDate.now();
+        log.info("getVoteOnToday for user id={}", userId);
+        return VotesUtil.createTo(voteRepository.getByUserIdAndDateVotingOrElseThrowNotFound(userId, date));
     }
 }

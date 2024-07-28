@@ -28,6 +28,7 @@ public class Vote extends BaseEntity implements HasId {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
     @ManyToOne(fetch = FetchType.LAZY)

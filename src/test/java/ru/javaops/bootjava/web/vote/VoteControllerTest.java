@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.bootjava.web.user.UserTestData.*;
-import static ru.javaops.bootjava.web.vote.VoteTestData.VOTE_MATCHER;
-import static ru.javaops.bootjava.web.vote.VoteTestData.vote_admin;
+import static ru.javaops.bootjava.web.vote.VoteTestData.*;
 
 class VoteControllerTest extends AbstractControllerTest {
     private static final String REST_URL_BY_RESTAURANT = VoteController.REST_URL + "/by-restaurant";
+    private static final String REST_URL_ON_TODAY = VoteController.REST_URL + "/on-today";
 
     @Autowired
     private VoteRepository voteRepository;
@@ -65,6 +65,23 @@ class VoteControllerTest extends AbstractControllerTest {
 
         Optional<Vote> optionalVote = voteRepository.getByDateVotingAndUserId(LocalDate.now(), ADMIN_ID);
         assertTrue(optionalVote.isPresent());
-        VOTE_MATCHER.assertMatch(optionalVote.get(), vote_admin);
+        VOTE_MATCHER.assertMatch(optionalVote.get(), vote_admin_on_today);
+    }
+
+    @Test
+    @WithUserDetails(value = GUEST_MAIL)
+    void getVoteOnToday() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_ON_TODAY))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(VOTE_TO_MATCHER.contentJson(vote_to_guest_on_today));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getVoteOnTodayNotFound() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_ON_TODAY))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 }

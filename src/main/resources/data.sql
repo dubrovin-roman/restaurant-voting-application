@@ -34,4 +34,13 @@ INSERT INTO DISH (name, price, restaurant_id, date_of_menu)
 VALUES ('Salad Old', 120.52, 2, '2024-07-01');
 
 INSERT INTO VOTE (user_id, restaurant_id)
-VALUES (2, 3);
+VALUES (2, 3),
+       (3, 2);
+
+INSERT INTO VOTE (date_voting, user_id, restaurant_id)
+VALUES ('2024-07-27', 2, 3),
+       ('2024-07-26', 2, 1),
+       ('2024-07-25', 2, 3),
+       ('2024-07-27', 1, 3),
+       ('2024-07-26', 1, 1),
+       ('2024-07-25', 1, 1);
