@@ -2,6 +2,7 @@ package ru.javaops.bootjava.web.restaurant;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class RestaurantController {
     private final RestaurantRepository restaurantRepository;
 
     @GetMapping("/for-today-with-dishes")
+    @Cacheable("restaurants")
     public List<Restaurant> getAllForTodayWithDishes() {
         log.info("getAllForTodayWithDishes");
         return restaurantRepository.findRestaurantByDateWithDishes(LocalDate.now());

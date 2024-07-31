@@ -3,6 +3,8 @@ package ru.javaops.bootjava.web.dish;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,7 @@ public class AdminDishController {
 
     @PostMapping(value = "/restaurants/{id}/dishes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
+    @CacheEvict(value = {"restaurants", "dishes"}, allEntries = true)
     public ResponseEntity<Dish> createWithLocation(@Valid @RequestBody Dish dish, @PathVariable int id) {
         log.info("createWithLocation {}", dish);
         checkNew(dish);
@@ -46,6 +49,7 @@ public class AdminDishController {
     }
 
     @GetMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
+    @Cacheable("dishes")
     public Dish get(@PathVariable int restaurantId, @PathVariable int dishId) {
         log.info("get {}", dishId);
         return dishRepository.getExistedByRestaurantIdAndDishId(restaurantId, dishId);
@@ -53,6 +57,7 @@ public class AdminDishController {
 
     @GetMapping(value = "/restaurants/{id}/dishes")
     @Transactional(readOnly = true)
+    @Cacheable("dishes")
     public List<Dish> getAllByRestaurantId(@PathVariable int id) {
         log.info("getAllByRestaurantId {}", id);
         restaurantRepository.isPresentByIdOrElseThrowNotFound(id);
@@ -61,6 +66,7 @@ public class AdminDishController {
 
     @DeleteMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = {"restaurants", "dishes"}, allEntries = true)
     public void delete(@PathVariable int restaurantId, @PathVariable int dishId) {
         log.info("delete {}", dishId);
         dishRepository.deleteExistedByRestaurantIdAndDishId(restaurantId, dishId);
@@ -69,6 +75,7 @@ public class AdminDishController {
     @PutMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict(value = {"restaurants", "dishes"}, allEntries = true)
     public void update(@PathVariable int restaurantId,
                        @PathVariable int dishId,
                        @Valid @RequestBody Dish dish) {

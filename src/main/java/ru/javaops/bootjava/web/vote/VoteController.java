@@ -2,6 +2,8 @@ package ru.javaops.bootjava.web.vote;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,6 +34,7 @@ public class VoteController {
     @PostMapping("/by-restaurant")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict(value = "votes", allEntries = true)
     public void toVote(@RequestParam int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
         LocalDate localDate = LocalDate.now();
         int userId = authUser.id();
@@ -51,6 +54,7 @@ public class VoteController {
     }
 
     @GetMapping("/on-today")
+    @Cacheable(value = "votes", key = "#authUser.id()")
     public VoteTo getVoteOnToday(@AuthenticationPrincipal AuthUser authUser) {
         int userId = authUser.id();
         LocalDate date = LocalDate.now();

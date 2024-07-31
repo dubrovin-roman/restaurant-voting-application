@@ -2,6 +2,7 @@ package ru.javaops.bootjava.web.dish;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
@@ -26,6 +27,7 @@ public class DishController {
 
     @GetMapping(value = "/restaurants/{id}/dishes/by-date")
     @Transactional(readOnly = true)
+    @Cacheable("dishes")
     public List<Dish> getAllByRestaurantIdAndDateOfMenu(@PathVariable int id,
                                                         @RequestParam @Nullable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateOfMenu) {
         log.info("getAll restaurantId = {} dateOfMenu = {}", id, dateOfMenu);
