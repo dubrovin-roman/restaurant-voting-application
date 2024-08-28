@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.javaops.bootjava.model.Dish;
 import ru.javaops.bootjava.repository.DishRepository;
 import ru.javaops.bootjava.repository.RestaurantRepository;
+import ru.javaops.bootjava.to.DishTo;
+import ru.javaops.bootjava.util.DishesUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,5 +38,12 @@ public class DishController {
             dateOfMenu = LocalDate.now();
         }
         return dishRepository.getAllByRestaurantIdAndDateOfMenu(id, dateOfMenu);
+    }
+
+    @GetMapping(value = "/dishes/on-today")
+    @Cacheable("dishesTo")
+    public List<DishTo> getAllOnToday() {
+        log.info("getAllOnToday");
+        return DishesUtil.createListTo(dishRepository.getAllByDateOfMenuWithRestaurant(LocalDate.now()));
     }
 }

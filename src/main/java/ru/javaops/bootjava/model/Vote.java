@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ru.javaops.bootjava.HasId;
 
 import java.time.LocalDate;
 
@@ -20,7 +19,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Vote extends BaseEntity implements HasId {
+public class Vote extends BaseEntity {
     @Column(name = "date_voting", nullable = false, columnDefinition = "date default now()", updatable = false)
     @NotNull
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

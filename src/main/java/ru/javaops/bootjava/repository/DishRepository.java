@@ -1,5 +1,6 @@
 package ru.javaops.bootjava.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,6 +23,10 @@ public interface DishRepository extends BaseRepository<Dish> {
 
     @Query("SELECT d FROM Dish d WHERE d.restaurant.id = :restaurantId AND d.id = :dishId")
     Optional<Dish> getByRestaurantIdAndDishId(@Param("restaurantId") int restaurantId, @Param("dishId") int dishId);
+
+    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.FETCH)
+    @Query("SELECT d FROM Dish d WHERE d.dateOfMenu = :dateOfMenu ORDER BY d.restaurant.id, d.price ASC")
+    List<Dish> getAllByDateOfMenuWithRestaurant(@Param("dateOfMenu") LocalDate dateOfMenu);
 
     @Transactional
     @Modifying

@@ -35,7 +35,7 @@ public class AdminDishController {
 
     @PostMapping(value = "/restaurants/{id}/dishes", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    @CacheEvict(value = {"restaurants", "dishes"}, allEntries = true)
+    @CacheEvict(value = {"restaurants", "dishes", "dishesTo"}, allEntries = true)
     public ResponseEntity<Dish> createWithLocation(@Valid @RequestBody Dish dish, @PathVariable int id) {
         log.info("createWithLocation {}", dish);
         checkNew(dish);
@@ -66,7 +66,7 @@ public class AdminDishController {
 
     @DeleteMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value = {"restaurants", "dishes"}, allEntries = true)
+    @CacheEvict(value = {"restaurants", "dishes", "dishesTo"}, allEntries = true)
     public void delete(@PathVariable int restaurantId, @PathVariable int dishId) {
         log.info("delete {}", dishId);
         dishRepository.deleteExistedByRestaurantIdAndDishId(restaurantId, dishId);
@@ -75,7 +75,7 @@ public class AdminDishController {
     @PutMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @CacheEvict(value = {"restaurants", "dishes"}, allEntries = true)
+    @CacheEvict(value = {"restaurants", "dishes", "dishesTo"}, allEntries = true)
     public void update(@PathVariable int restaurantId,
                        @PathVariable int dishId,
                        @Valid @RequestBody Dish dish) {

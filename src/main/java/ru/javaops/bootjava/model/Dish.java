@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ru.javaops.bootjava.HasId;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,7 +20,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Dish extends NamedEntity implements HasId {
+public class Dish extends NamedEntity {
     @Column(name = "price", nullable = false)
     @DecimalMin(value = "0.00")
     @NotNull

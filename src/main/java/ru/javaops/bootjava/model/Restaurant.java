@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ru.javaops.bootjava.HasId;
 import ru.javaops.bootjava.validation.NoHtml;
 
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Restaurant extends NamedEntity implements HasId {
+public class Restaurant extends NamedEntity {
     @Column(name = "address", unique = true, nullable = false)
     @NotBlank
     @Size(min = 5, max = 512)
