@@ -26,7 +26,7 @@ class DishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_MATCHER.contentJson(dishesByDateNow));
+                .andExpect(DISH_MATCHER.contentJson(dishesByDateNowAstoria));
     }
 
     @Test
@@ -37,7 +37,7 @@ class DishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_MATCHER.contentJson(dishesByDateNow));
+                .andExpect(DISH_MATCHER.contentJson(dishesByDateNowAstoria));
     }
 
     @Test
@@ -68,5 +68,15 @@ class DishControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(String.format(REST_URL_FORMAT, RestaurantTestData.NOT_FOUND_ID)))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getAllOnToday() throws Exception {
+        perform(MockMvcRequestBuilders.get(DishController.REST_URL + "/dishes/on-today"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(DISH_TO_MATCHER.contentJson(DishTestData.getToOnToday()));
     }
 }

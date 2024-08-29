@@ -1,15 +1,19 @@
 package ru.javaops.bootjava.web.dish;
 
 import ru.javaops.bootjava.model.Dish;
+import ru.javaops.bootjava.to.DishTo;
+import ru.javaops.bootjava.util.DishesUtil;
 import ru.javaops.bootjava.web.MatcherFactory;
 import ru.javaops.bootjava.web.restaurant.RestaurantTestData;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class DishTestData {
     public static final MatcherFactory.Matcher<Dish> DISH_MATCHER = MatcherFactory.usingEqualsComparator(Dish.class);
+    public static final MatcherFactory.Matcher<DishTo> DISH_TO_MATCHER = MatcherFactory.usingEqualsComparator(DishTo.class);
 
     public static final int SOUP_ID = 1;
     public static final int STEAK_ID = 2;
@@ -95,7 +99,8 @@ public class DishTestData {
             RestaurantTestData.pancakes,
             LocalDate.parse(DATE_OLD_MENU));
 
-    public static final List<Dish> dishesByDateNow = List.of(salad, soup, dessert, fish, steak);
+    public static final List<Dish> dishesByDateNowAstoria = List.of(salad, soup, dessert, fish, steak);
+    public static final List<Dish> dishesByDateNowHeight = List.of(saladHeight, hamburgerHeight, steakHeight);
     public static final List<Dish> dishesByOldDate = List.of(soupOld, fishOld, steakOld);
     public static final List<Dish> dishesByAstoria = List.of(salad, soup, dessert, fish, steak, soupOld, fishOld, steakOld);
 
@@ -105,5 +110,11 @@ public class DishTestData {
 
     public static Dish getUpdated() {
         return new Dish(STEAK_ID, "Steak Updated", new BigDecimal("325.00"), null, LocalDate.now());
+    }
+
+    public static List<DishTo> getToOnToday() {
+        return Stream.concat(DishesUtil.createListTo(dishesByDateNowAstoria).stream(),
+                        DishesUtil.createListTo(dishesByDateNowHeight).stream())
+                .toList();
     }
 }
