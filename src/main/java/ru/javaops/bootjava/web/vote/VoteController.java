@@ -19,6 +19,7 @@ import ru.javaops.bootjava.util.VotesUtil;
 import ru.javaops.bootjava.web.AuthUser;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -60,5 +61,12 @@ public class VoteController {
         LocalDate date = LocalDate.now();
         log.info("getVoteOnToday for user id={}", userId);
         return VotesUtil.createTo(voteRepository.getByUserIdAndDateVotingOrElseThrowNotFound(userId, date));
+    }
+
+    @GetMapping
+    public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
+        int userId = authUser.id();
+        log.info("getAll for user id={}", userId);
+        return VotesUtil.createListTo(voteRepository.getByUserId(userId));
     }
 }

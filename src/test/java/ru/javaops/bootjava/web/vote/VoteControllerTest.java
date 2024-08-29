@@ -84,4 +84,13 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getAll() throws Exception {
+        perform(MockMvcRequestBuilders.get(VoteController.REST_URL))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(VOTE_TO_MATCHER.contentJson(voteToListByUser));
+    }
 }
