@@ -29,11 +29,11 @@ public class AdminRestaurantController {
     static final String REST_URL = "/api/admin/restaurants";
 
     private final RestaurantRepository restaurantRepository;
-    private final UniqueAddressValidator uniqueAddressValidator;
+    private final UniqueNameAddressValidator uniqueNameAddressValidator;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
-        binder.addValidators(uniqueAddressValidator);
+        binder.addValidators(uniqueNameAddressValidator);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -41,7 +41,7 @@ public class AdminRestaurantController {
     public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
         log.info("createWithLocation: {}", restaurant);
         checkNew(restaurant);
-        Restaurant created = restaurantRepository.prepareAndSave(restaurant);
+        Restaurant created = restaurantRepository.save(restaurant);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
@@ -54,7 +54,7 @@ public class AdminRestaurantController {
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update {} with id = {}", restaurant, id);
         assureIdConsistent(restaurant, id);
-        restaurantRepository.prepareAndSave(restaurant);
+        restaurantRepository.save(restaurant);
     }
 
     @GetMapping("/{id}")

@@ -15,12 +15,13 @@ import ru.javaops.bootjava.validation.NoHtml;
 import java.util.List;
 
 @Entity
-@Table(name = "restaurant")
+@Table(name = "restaurant",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "address"}, name = "uk_name_address"))
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Restaurant extends NamedEntity {
-    @Column(name = "address", unique = true, nullable = false)
+    @Column(name = "address", nullable = false)
     @NotBlank
     @Size(min = 5, max = 512)
     @NoHtml

@@ -12,16 +12,10 @@ import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface RestaurantRepository extends BaseRepository<Restaurant> {
-    Optional<Restaurant> findRestaurantByAddressIgnoreCase(String address);
+    Optional<Restaurant> findRestaurantByNameAndAddress(String name, String address);
 
     @Query("SELECT r FROM Restaurant r RIGHT JOIN Dish d ON r.id = d.restaurant.id WHERE d.dateOfMenu = :dateOfMenu ORDER BY r.name, r.address ASC")
     List<Restaurant> findRestaurantByDateWithDishes(@Param("dateOfMenu") LocalDate dateOfMenu);
-
-    @Transactional
-    default Restaurant prepareAndSave(Restaurant restaurant) {
-        restaurant.setAddress(restaurant.getAddress().trim().toUpperCase());
-        return save(restaurant);
-    }
 
     boolean existsRestaurantById(int id);
 

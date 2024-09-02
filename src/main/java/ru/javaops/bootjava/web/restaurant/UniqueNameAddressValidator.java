@@ -11,8 +11,8 @@ import ru.javaops.bootjava.repository.RestaurantRepository;
 
 @Component
 @AllArgsConstructor
-public class UniqueAddressValidator implements Validator {
-    public static final String EXCEPTION_DUPLICATE_ADDRESS = "Restaurant address already exists";
+public class UniqueNameAddressValidator implements Validator {
+    public static final String EXCEPTION_DUPLICATE_NAME_ADDRESS = "Restaurant with the same name and address already exists.";
 
     private final RestaurantRepository restaurantRepository;
     private final HttpServletRequest request;
@@ -26,7 +26,7 @@ public class UniqueAddressValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Restaurant restaurantTarget = (Restaurant) target;
         if (StringUtils.hasText(restaurantTarget.getAddress())) {
-            restaurantRepository.findRestaurantByAddressIgnoreCase(restaurantTarget.getAddress().trim())
+            restaurantRepository.findRestaurantByNameAndAddress(restaurantTarget.getName(), restaurantTarget.getAddress())
                     .ifPresent(restaurant -> {
                         if (request.getMethod().equals("PUT")) {
                             String requestURI = request.getRequestURI();
@@ -35,7 +35,8 @@ public class UniqueAddressValidator implements Validator {
                                 return;
                             }
                         }
-                        errors.rejectValue("address", "", EXCEPTION_DUPLICATE_ADDRESS);
+                        errors.rejectValue("name", "", EXCEPTION_DUPLICATE_NAME_ADDRESS);
+                        errors.rejectValue("address", "", EXCEPTION_DUPLICATE_NAME_ADDRESS);
                     });
         }
     }

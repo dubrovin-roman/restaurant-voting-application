@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.bootjava.web.restaurant.AdminRestaurantController.REST_URL;
 import static ru.javaops.bootjava.web.restaurant.RestaurantTestData.*;
-import static ru.javaops.bootjava.web.restaurant.UniqueAddressValidator.EXCEPTION_DUPLICATE_ADDRESS;
+import static ru.javaops.bootjava.web.restaurant.UniqueNameAddressValidator.EXCEPTION_DUPLICATE_NAME_ADDRESS;
 import static ru.javaops.bootjava.web.user.UserTestData.ADMIN_MAIL;
 import static ru.javaops.bootjava.web.user.UserTestData.USER_MAIL;
 
@@ -43,7 +43,6 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
         Restaurant created = RESTAURANT_MATCHER.readFromJson(action);
         int newId = created.getId();
         newRestaurant.setId(newId);
-        newRestaurant.setAddress(newRestaurant.getAddress().trim().toUpperCase());
         RESTAURANT_MATCHER.assertMatch(created, newRestaurant);
         RESTAURANT_MATCHER.assertMatch(restaurantRepository.getExisted(newId), newRestaurant);
     }
@@ -52,13 +51,13 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     @WithUserDetails(value = ADMIN_MAIL)
     void createDuplicate() throws Exception {
-        Restaurant expected = new Restaurant(null, "New Restaurant", ASTORIA_ADDRESS);
+        Restaurant expected = new Restaurant(null, ASTORIA_NAME, ASTORIA_ADDRESS);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(APPLICATION_JSON)
                 .content(JsonUtil.writeValue(expected)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_ADDRESS)));
+                .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_NAME_ADDRESS)));
     }
 
     @Test
@@ -105,13 +104,14 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     void updateDuplicate() throws Exception {
         Restaurant updated = getUpdated();
         updated.setId(null);
+        updated.setName(PANCAKES_NAME);
         updated.setAddress(PANCAKES_ADDRESS);
         perform(MockMvcRequestBuilders.put(REST_URL_SLASH + ASTORIA_ID)
                 .contentType(APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_ADDRESS)));
+                .andExpect(content().string(containsString(EXCEPTION_DUPLICATE_NAME_ADDRESS)));
 
     }
 
