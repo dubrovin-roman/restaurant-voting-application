@@ -1,7 +1,6 @@
 package ru.javaops.bootjava.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -32,9 +31,8 @@ public class Dish extends NamedEntity {
     @JsonIgnore
     private Restaurant restaurant;
 
-    @Column(name = "date_of_menu", nullable = false, columnDefinition = "date default now()", updatable = false)
+    @Column(name = "date_of_menu", nullable = false, columnDefinition = "date default now()")
     @NotNull
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate dateOfMenu = LocalDate.now();
 
     public Dish(Integer id, String name, BigDecimal price, Restaurant restaurant, LocalDate dateOfMenu) {

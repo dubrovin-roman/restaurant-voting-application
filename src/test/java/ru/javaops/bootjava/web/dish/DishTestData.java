@@ -109,7 +109,8 @@ public class DishTestData {
     }
 
     public static Dish getUpdated() {
-        return new Dish(STEAK_ID, "Steak Updated", new BigDecimal("325.00"), null, LocalDate.now());
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        return new Dish(STEAK_ID, "Steak Updated", new BigDecimal("325.00"), null, tomorrow);
     }
 
     public static List<DishTo> getToOnToday() {

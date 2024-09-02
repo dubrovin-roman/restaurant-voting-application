@@ -37,6 +37,27 @@ class AdminDishControllerTest extends AbstractControllerTest {
         ResultActions action = perform(MockMvcRequestBuilders.post(String.format(REST_URL_FORMAT_WITH_ONE_ID, RestaurantTestData.PANCAKES_ID))
                 .contentType(APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDish)))
+                .andDo(print())
+                .andExpect(status().isCreated());
+
+        Dish created = DISH_MATCHER.readFromJson(action);
+        int newId = created.getId();
+        newDish.setId(newId);
+        DISH_MATCHER.assertMatch(created, newDish);
+        DISH_MATCHER.assertMatch(dishRepository.getExisted(newId), newDish);
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void createWithLocationOnTomorrow() throws Exception {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        Dish newDish = getNew();
+        newDish.setDateOfMenu(tomorrow);
+
+        ResultActions action = perform(MockMvcRequestBuilders.post(String.format(REST_URL_FORMAT_WITH_ONE_ID, RestaurantTestData.PANCAKES_ID))
+                .contentType(APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newDish)))
+                .andDo(print())
                 .andExpect(status().isCreated());
 
         Dish created = DISH_MATCHER.readFromJson(action);
