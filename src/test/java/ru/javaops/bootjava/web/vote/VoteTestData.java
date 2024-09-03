@@ -50,4 +50,8 @@ public class VoteTestData {
             vote_to_user_on_2024_07_27, vote_to_admin_on_2024_07_26, vote_to_user_on_2024_07_26, vote_to_admin_on_2024_07_25,
             vote_to_user_on_2024_07_25);
     public static final List<VoteTo> voteToListByUser = List.of(vote_to_user_on_2024_07_27, vote_to_user_on_2024_07_26, vote_to_user_on_2024_07_25);
+
+    public static VoteTo getNew() {
+        return new VoteTo(null, LocalDate.now(), RestaurantTestData.HEIGHT_ID, UserTestData.USER_ID);
+    }
 }

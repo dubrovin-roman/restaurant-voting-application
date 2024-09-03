@@ -31,17 +31,17 @@ public interface VoteRepository extends BaseRepository<Vote> {
 
     @EntityGraph(attributePaths = {"restaurant", "user"}, type = EntityGraph.EntityGraphType.FETCH)
     @Query("SELECT v FROM Vote v WHERE v.user.id = :userId AND v.dateVoting = :date")
-    Optional<Vote> getByUserIdAndDateVoting(@Param("userId") int userId, @Param("date") LocalDate date);
+    Optional<Vote> getByUserIdAndDateVotingWithRestaurantAndUser(@Param("userId") int userId, @Param("date") LocalDate date);
 
     default Vote getByUserIdAndDateVotingExisted(int userId, LocalDate date) {
-        Optional<Vote> optionalVote = getByUserIdAndDateVoting(userId, date);
+        Optional<Vote> optionalVote = getByUserIdAndDateVotingWithRestaurantAndUser(userId, date);
         if (optionalVote.isEmpty()) {
             throw new NotFoundException("Vote for User with id=" + userId + " on date=" + date + " not found");
         }
         return optionalVote.get();
     }
 
-    @EntityGraph(attributePaths = {"restaurant", "user"}, type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.FETCH)
     @Query("SELECT v FROM Vote v WHERE v.user.id = :userId ORDER BY v.dateVoting DESC ")
-    List<Vote> getByUserId(@Param("userId") int userId);
+    List<Vote> getAllByUserIdWithRestaurant(@Param("userId") int userId);
 }

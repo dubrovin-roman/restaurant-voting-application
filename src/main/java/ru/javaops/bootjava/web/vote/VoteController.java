@@ -32,7 +32,10 @@ import static ru.javaops.bootjava.web.RestValidation.checkNew;
 @Slf4j
 @AllArgsConstructor
 public class VoteController {
-    static final String REST_URL = "/api/votes";
+    public static final String REST_URL = "/api/votes";
+    public static final String EXCEPTION_VOTE_EXISTS = "The vote on today already exists, it is impossible to create a new one.";
+    public static final String EXCEPTION_VOTE_NOT_EXISTS = "The vote on today not exists, it is impossible re vote.";
+    public static final String EXCEPTION_VOTING_ERROR = "Time is after eleven o'clock, voting cannot be changed.";
 
     private VoteRepository voteRepository;
     private EntityManager entityManager;
@@ -47,7 +50,7 @@ public class VoteController {
         Restaurant restaurant = entityManager.getReference(Restaurant.class, voteTo.getRestaurantId());
         Optional<Vote> optionalVote = voteRepository.getByDateVotingAndUserId(localDate, userId);
         if (optionalVote.isPresent()) {
-            throw new DataConflictException("The vote on today already exists, it is impossible to create a new one.");
+            throw new DataConflictException(EXCEPTION_VOTE_EXISTS);
         } else {
             Vote created = voteRepository.save(new Vote(null, localDate, restaurant, AuthUser.authUser()));
             URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -67,10 +70,10 @@ public class VoteController {
         int userId = authUser.id();
         Optional<Vote> optionalVote = voteRepository.getByDateVotingAndUserId(localDate, userId);
         if (optionalVote.isEmpty()) {
-            throw new DataConflictException("The vote on today not exists, it is impossible re vote.");
+            throw new DataConflictException(EXCEPTION_VOTE_NOT_EXISTS);
         } else {
             if (VotesUtil.isCanNotReVote()) {
-                throw new DataConflictException("Time is after eleven o'clock, voting cannot be changed.");
+                throw new DataConflictException(EXCEPTION_VOTING_ERROR);
             }
             Restaurant restaurant = entityManager.getReference(Restaurant.class, voteTo.getRestaurantId());
             Vote vote = optionalVote.get();
@@ -103,6 +106,6 @@ public class VoteController {
     public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
         int userId = authUser.id();
         log.info("getAll for user id={}", userId);
-        return VotesUtil.createListTo(voteRepository.getByUserId(userId));
+        return VotesUtil.createListToWithUserId(voteRepository.getAllByUserIdWithRestaurant(userId), userId);
     }
 }
