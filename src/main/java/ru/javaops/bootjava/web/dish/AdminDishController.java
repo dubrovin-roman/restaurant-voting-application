@@ -80,9 +80,9 @@ public class AdminDishController {
                        @PathVariable int dishId,
                        @Valid @RequestBody Dish dish) {
         log.info("update {} with id = {}", dish, dishId);
+        assureIdConsistent(dish, dishId);
         Restaurant restaurant = restaurantRepository.getExisted(restaurantId);
         checkDishBelongsToRestaurant(restaurantId, dishId);
-        assureIdConsistent(dish, dishId);
         dish.setRestaurant(restaurant);
         dishRepository.save(dish);
     }

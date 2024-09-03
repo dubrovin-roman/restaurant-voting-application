@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "dish")
+@Table(name = "dish", indexes = @Index(columnList = "restaurant_id", name = "ri_dish_index"))
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -1,5 +1,6 @@
 package ru.javaops.bootjava.web.vote;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,7 +15,6 @@ import ru.javaops.bootjava.error.DataConflictException;
 import ru.javaops.bootjava.error.IllegalRequestDataException;
 import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.model.Vote;
-import ru.javaops.bootjava.repository.RestaurantRepository;
 import ru.javaops.bootjava.repository.VoteRepository;
 import ru.javaops.bootjava.to.VoteTo;
 import ru.javaops.bootjava.util.VotesUtil;
@@ -35,7 +35,7 @@ public class VoteController {
     static final String REST_URL = "/api/votes";
 
     private VoteRepository voteRepository;
-    private RestaurantRepository restaurantRepository;
+    private EntityManager entityManager;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -44,7 +44,7 @@ public class VoteController {
         checkNew(voteTo);
         LocalDate localDate = LocalDate.now();
         int userId = authUser.id();
-        Restaurant restaurant = restaurantRepository.getExisted(voteTo.getRestaurantId());
+        Restaurant restaurant = entityManager.getReference(Restaurant.class, voteTo.getRestaurantId());
         Optional<Vote> optionalVote = voteRepository.getByDateVotingAndUserId(localDate, userId);
         if (optionalVote.isPresent()) {
             throw new DataConflictException("The vote on today already exists, it is impossible to create a new one.");
@@ -72,7 +72,7 @@ public class VoteController {
             if (VotesUtil.isCanNotReVote()) {
                 throw new DataConflictException("Time is after eleven o'clock, voting cannot be changed.");
             }
-            Restaurant restaurant = restaurantRepository.getExisted(voteTo.getRestaurantId());
+            Restaurant restaurant = entityManager.getReference(Restaurant.class, voteTo.getRestaurantId());
             Vote vote = optionalVote.get();
             vote.setRestaurant(restaurant);
             voteRepository.save(vote);
