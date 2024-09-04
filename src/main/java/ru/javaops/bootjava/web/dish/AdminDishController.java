@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +48,6 @@ public class AdminDishController {
     }
 
     @GetMapping(value = "/restaurants/{restaurantId}/dishes/{dishId}")
-    @Cacheable("dishes")
     public Dish get(@PathVariable int restaurantId, @PathVariable int dishId) {
         log.info("get {}", dishId);
         return dishRepository.getExistedByRestaurantIdAndDishId(restaurantId, dishId);
@@ -57,7 +55,6 @@ public class AdminDishController {
 
     @GetMapping(value = "/restaurants/{id}/dishes")
     @Transactional(readOnly = true)
-    @Cacheable("dishes")
     public List<Dish> getAllByRestaurantId(@PathVariable int id) {
         log.info("getAllByRestaurantId {}", id);
         restaurantRepository.isPresentByIdOrElseThrowNotFound(id);
