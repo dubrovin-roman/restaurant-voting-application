@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,7 +57,6 @@ public class AdminRestaurantController {
     }
 
     @GetMapping("/{id}")
-    @Cacheable("restaurants")
     public Restaurant get(@PathVariable int id) {
         log.info("get {}", id);
         return restaurantRepository.getExisted(id);
@@ -73,7 +71,6 @@ public class AdminRestaurantController {
     }
 
     @GetMapping
-    @Cacheable("restaurants")
     public List<Restaurant> getAll() {
         log.info("getAll");
         return restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name", "address"));
