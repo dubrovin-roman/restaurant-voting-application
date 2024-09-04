@@ -3,6 +3,7 @@ package ru.javaops.bootjava.web.vote;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,6 +43,7 @@ public class VoteController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
+    @CacheEvict(value = "votes", key = "#authUser.id()")
     public ResponseEntity<VoteTo> createWithLocation(@RequestBody VoteTo voteTo, @AuthenticationPrincipal AuthUser authUser) {
         log.info("createWithLocation with restaurantId={}", voteTo.getRestaurantId());
         checkNew(voteTo);
@@ -64,6 +66,7 @@ public class VoteController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict(value = "votes", key = "#authUser.id()")
     public void reVote(@RequestBody VoteTo voteTo, @AuthenticationPrincipal AuthUser authUser) {
         log.info("reVote with restaurantId={}", voteTo.getRestaurantId());
         LocalDate localDate = LocalDate.now();
@@ -94,7 +97,6 @@ public class VoteController {
     }
 
     @GetMapping("/on-today")
-    @Cacheable(value = "votes", key = "#authUser.id()")
     public VoteTo getOnToday(@AuthenticationPrincipal AuthUser authUser) {
         int userId = authUser.id();
         LocalDate date = LocalDate.now();
@@ -103,6 +105,7 @@ public class VoteController {
     }
 
     @GetMapping
+    @Cacheable(value = "votes", key = "#authUser.id()")
     public List<VoteTo> getAll(@AuthenticationPrincipal AuthUser authUser) {
         int userId = authUser.id();
         log.info("getAll for user id={}", userId);
