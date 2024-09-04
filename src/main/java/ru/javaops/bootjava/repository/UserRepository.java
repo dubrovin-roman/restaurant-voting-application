@@ -1,5 +1,6 @@
 package ru.javaops.bootjava.repository;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.bootjava.error.NotFoundException;
@@ -12,6 +13,7 @@ import static ru.javaops.bootjava.config.SecurityConfig.PASSWORD_ENCODER;
 @Transactional(readOnly = true)
 public interface UserRepository extends BaseRepository<User> {
     @Query("SELECT u FROM User u WHERE u.email = LOWER(:email)")
+    @Cacheable(value = "users", key = "#email")
     Optional<User> findByEmailIgnoreCase(String email);
 
     @Transactional

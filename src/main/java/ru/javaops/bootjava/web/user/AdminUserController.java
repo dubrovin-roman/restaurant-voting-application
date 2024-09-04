@@ -2,7 +2,6 @@ package ru.javaops.bootjava.web.user;
 
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +25,6 @@ public class AdminUserController extends AbstractUserController {
 
     @Override
     @GetMapping("/{id}")
-    @Cacheable("users")
     public User get(@PathVariable int id) {
         return super.get(id);
     }
@@ -40,14 +38,12 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @GetMapping
-    @Cacheable("users")
     public List<User> getAll() {
         log.info("getAll");
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name", "email"));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user) {
         log.info("create {}", user);
         checkNew(user);
@@ -68,7 +64,6 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @GetMapping("/by-email")
-    @Cacheable("users")
     public User getByEmail(@RequestParam String email) {
         log.info("getByEmail {}", email);
         return repository.getExistedByEmail(email);
